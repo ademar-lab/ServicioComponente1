@@ -41,17 +41,17 @@ print(f"r prima: {valoresRP}")
 valoresT = [teta1+((deltaT/(n))*(x+1)) for x in range(n)]
 print(f"teta: {valoresT}")
 valoresTP = [tetaP1-((deltaTP/(n))*(x+1)) for x in range(n)]
-print(f"teta prima: {valoresTP}")
+print(f"teta prima: {valoresTP}\n")
 
 # Crear una lista de vectores para cada átomo de hidrógeno de cada geometría parcial
-a = np.array
-b = []
-c = []
-d = []
+a = np.array([np.array([(-1*r*(np.cos(math.radians(x)))), (r*(np.sin(math.radians(x)))), 0]) for x in valoresT])
+b = np.array([np.array([(r*(np.cos(math.radians(x)))), (r*(np.sin(math.radians(x)))), 0]) for x in valoresT])
 
-for n in range(n):
-    for x in valoresT:
-        avector = np.array([(-1*r*(np.cos(math.radians(x)))), (r*(np.sin(math.radians(x)))), 0])
-        a.append(avector)
+# Trabajar aquí
+c = np.array([np.array([0, (-1*y*(np.sin(math.radians(x)))), (y*(np.cos(math.radians(x))))]) for x,y in zip(valoresTP, valoresRP)])
+d = np.array([np.array([0, (-1*y*(np.sin(math.radians(x)))), (-1*y*(np.cos(math.radians(x))))]) for x, y in zip(valoresTP, valoresRP)])
+
 print(a)
-    
+print(b)
+print(c)
+print(d)
