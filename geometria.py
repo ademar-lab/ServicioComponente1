@@ -1,7 +1,7 @@
 """
 Este programa analizará la hibridacion sp3 a sp2 de una molécula de carbono tetrahedral.
 
-El resultado esperado es una lista de coordenadas de los átomos de hidrógeno, tomando en cuenta el átomo de carbono como el origen del plano x y z. La lista tendrá 2+n elementos por cada n geometrías parciales deseadas.
+El resultado esperado es una lista de coordenadas de los átomos de hidrógeno, tomando en cuenta el átomo de carbono como el origen del plano x y z. La lista tendrá n elementos por cada n geometrías parciales deseadas.
 """
 
 import numpy as np
@@ -44,14 +44,14 @@ valoresTP = [tetaP1-((deltaTP/(n))*(x+1)) for x in range(n)]
 print(f"teta prima: {valoresTP}\n")
 
 # Crear una lista de vectores para cada átomo de hidrógeno de cada geometría parcial
-a = np.array([np.array([(-1*r*(np.cos(math.radians(x)))), (r*(np.sin(math.radians(x)))), 0]) for x in valoresT])
-b = np.array([np.array([(r*(np.cos(math.radians(x)))), (r*(np.sin(math.radians(x)))), 0]) for x in valoresT])
+a = np.array([np.array([(-1*r*(np.cos(math.radians(90-(x/2))))), (r*(np.sin(math.radians(90-(x/2))))), 0]) for x in valoresT])
+b = np.array([np.array([(r*(np.cos(math.radians(90-(x/2))))), (r*(np.sin(math.radians(90-(x/2))))), 0]) for x in valoresT])
 
 # Trabajar aquí
-c = np.array([np.array([0, (-1*y*(np.sin(math.radians(x)))), (y*(np.cos(math.radians(x))))]) for x,y in zip(valoresTP, valoresRP)])
-d = np.array([np.array([0, (-1*y*(np.sin(math.radians(x)))), (-1*y*(np.cos(math.radians(x))))]) for x, y in zip(valoresTP, valoresRP)])
+c = np.array([np.array([0, (-1*y*(np.sin(math.radians(90-(x/2))))), (y*(np.cos(math.radians(90-(x/2)))))]) for x,y in zip(valoresTP, valoresRP)])
+d = np.array([np.array([0, (-1*y*(np.sin(math.radians(90-(x/2))))), (-1*y*(np.cos(math.radians(90-(x/2)))))]) for x, y in zip(valoresTP, valoresRP)])
 
-print(a)
-print(b)
-print(c)
-print(d)
+print(f"vector a: {a}")
+print(f"\nvector b: {b}")
+print(f"\nvector c: {c}")
+print(f"\nvector d: {d}")
