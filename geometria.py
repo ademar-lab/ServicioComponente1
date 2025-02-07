@@ -31,17 +31,18 @@ deltaT = abs(teta2-teta1)
 deltaTP = abs(tetaP2-tetaP1)
 
 # Comenzar el algoritmo
-print("Este programa analizará la geometria de la hibridacion sp3 a sp2 de una molécula de carbono tetrahedral.\n")
+print("\nESTE PROGRAMA ANALIZARÁ LA GEOMETRÍA DE LA HIBRIDACIÓN SP2 A SP3 DE UNA MOLÉCULA CH4.\nLA SALIDA SERÁ UNA LISTA DE LAS COORDENADAS DE LOS ÁTOMOS H EN LOS MOMENTOS DURANTE LA HIBRIDACIÓN.")
+print("_" * 100)
 
-n = int(input("Cual es la cantidad de geometrias graduales que deseas? "))
+n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
 
 # Crear una lista de los valores parciales para cada variable
 valoresRP = [r-((deltaR/(n))*(x+1)) for x in range(n)]
-print(f"r prima: {valoresRP}")
+# Troubleshooting: print(f"r prima: {valoresRP}")
 valoresT = [teta1+((deltaT/(n))*(x+1)) for x in range(n)]
-print(f"teta: {valoresT}")
+# print(f"teta: {valoresT}")
 valoresTP = [tetaP1-((deltaTP/(n))*(x+1)) for x in range(n)]
-print(f"teta prima: {valoresTP}\n")
+# print(f"teta prima: {valoresTP}\n")
 
 # Crear una lista de vectores para cada átomo de hidrógeno de cada geometría parcial
 a = np.array([np.array([(-1*r*(np.cos(math.radians(90-(x/2))))), (r*(np.sin(math.radians(90-(x/2))))), 0]) for x in valoresT])
@@ -51,7 +52,6 @@ b = np.array([np.array([(r*(np.cos(math.radians(90-(x/2))))), (r*(np.sin(math.ra
 c = np.array([np.array([0, (-1*y*(np.sin(math.radians(90-(x/2))))), (y*(np.cos(math.radians(90-(x/2)))))]) for x,y in zip(valoresTP, valoresRP)])
 d = np.array([np.array([0, (-1*y*(np.sin(math.radians(90-(x/2))))), (-1*y*(np.cos(math.radians(90-(x/2)))))]) for x, y in zip(valoresTP, valoresRP)])
 
-print(f"vector a: {a}")
-print(f"\nvector b: {b}")
-print(f"\nvector c: {c}")
-print(f"\nvector d: {d}")
+for x in range(n-1):
+    print(f"\nGEOMETRÍA PARCIAL {x+1}")
+    print(f"{a[x]}\n{b[x]}\n{c[x]}\n{d[x]}")
