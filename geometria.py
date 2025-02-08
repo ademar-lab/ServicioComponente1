@@ -48,10 +48,46 @@ valoresTP = [tetaP1-((deltaTP/(n))*(x+1)) for x in range(n)]
 a = np.array([np.array([(-1*r*(np.cos(math.radians(90-(x/2))))), (r*(np.sin(math.radians(90-(x/2))))), 0]) for x in valoresT])
 b = np.array([np.array([(r*(np.cos(math.radians(90-(x/2))))), (r*(np.sin(math.radians(90-(x/2))))), 0]) for x in valoresT])
 
-# Trabajar aquí
 c = np.array([np.array([0, (-1*y*(np.sin(math.radians(90-(x/2))))), (y*(np.cos(math.radians(90-(x/2)))))]) for x,y in zip(valoresTP, valoresRP)])
 d = np.array([np.array([0, (-1*y*(np.sin(math.radians(90-(x/2))))), (-1*y*(np.cos(math.radians(90-(x/2)))))]) for x, y in zip(valoresTP, valoresRP)])
+
+atomslist = [a,b,c,d]
 
 for x in range(n-1):
     print(f"\nGEOMETRÍA PARCIAL {x+1}")
     print(f"{a[x]}\n{b[x]}\n{c[x]}\n{d[x]}")
+
+# Generar los documentos .gjf
+flag = True
+print("_"*100)
+# Restringir las entradas a 'y' y 'n'
+while(flag):
+    ans = input("\n¿QUIERES CREAR UN DOCUMENTO .gjf PARA CADA UNA DE LAS GEOMETRÍAS PARCIALES?\n Responde 'y' para sí, 'n' para no. ")
+    if ans == 'y' or ans == 'n':
+        flag = False
+        if ans == 'y':
+            ans = True
+        else:
+            ans = False
+
+if ans:
+    # Creación de un archivo .gjf por cada geometria parcial
+    for n in range(n-1):
+        # Insertar las coordenadas en la plantilla .gjf
+        file_path = "template.gjf"
+
+        with open(file_path, 'r') as file:
+            template = file.read()
+            # Número de átomos de H
+            for x in range(4):
+                # Número de demensiones para el vector del átomo H
+                for y in range(3):
+                    template = template.replace(f"{x+1}[n][{y}]", f"{atomslist[x][n][y]}")
+        print(template)
+
+        new_file_path = f"{n+1}geom.gjf."
+
+        with open(new_file_path, 'w') as file:
+            file.write(template)
+    
+    print(f"File '{new_file_path}' created successfully.")
