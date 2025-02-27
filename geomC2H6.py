@@ -28,8 +28,6 @@ e = (-1*d) + c
 f = (-1*a) + c
 g = (-1*b) + c
 
-atomslist = [a,b,c,d,e,f,g]
-
 # Imprimir coordenadas de la molécula inicial
 # for x in range(7):
 #    print(f"{a[x]}\n{b[x]}\n{d[x]}\n{c[x]}\n{e[x]}\n{f[x]}\n{g[x]}")
@@ -57,8 +55,61 @@ n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
 # Crear una lista de los valores parciales para cada variable
 valoresRCC = [rCC-((deltaRCC/(n))*(x+1)) for x in range(n)]
 # Troubleshooting
-print(f"r prima: {valoresRCC}")
+# print(f"r prima: {valoresRCC}")
 valoresT1 = [teta1+((deltaT1/(n))*(x+1)) for x in range(n)]
-print(f"teta1: {valoresT1}")
+# print(f"teta1: {valoresT1}")
 valoresT2 = [teta2-((deltaT2/(n))*(x+1)) for x in range(n)]
-print(f"teta2: {valoresT2}\n")
+# print(f"teta2: {valoresT2}\n")
+
+# Crear una lista de vectores para cada átomo de cada geometría parcial
+a = np.array([np.array([(-rCH*(np.sin(math.radians(x/2)))), (rCH*(np.cos(math.radians(x/2)))), 0]) for x in valoresT2])
+b = np.array([np.array([(rCH*(np.sin(math.radians(teta1/2)))), (rCH*(np.cos(math.radians(teta1/2)))), 0]) for x in range(n)])
+
+c = np.array([np.array([0, (-y*(np.cos(math.radians(x/2)))), (y*(np.sin(math.radians(x/2))))]) for x, y in zip(valoresT1, valoresRCC)])
+d = np.array([np.array([0, (-rCH*(np.cos(math.radians(x/2)))), (-rCH*(np.sin(math.radians(x/2))))]) for x in valoresT1])
+
+e = (-1*d) + c
+f = (-1*a) + c
+g = (-1*b) + c
+
+# El átomo c cambia de lugar con d debido al posicinamiento de este átomo en el doc .gjf 
+atomslist = [a,b,d,c,e,f,g]
+
+for x in range(n-1):
+    print(f"\nGEOMETRÍA PARCIAL {x+1}")
+    print(f"{a[x]}\n{b[x]}\n{d[x]}\n{c[x]}\n{e[x]}\n{f[x]}\n{g[x]}")
+
+# Generar los documentos .gjf
+flag = True
+print("_"*100)
+# Restringir las entradas a 'y' y 'n'
+while(flag):
+    ans = input("\n¿QUIERES CREAR UN DOCUMENTO .gjf PARA CADA UNA DE LAS GEOMETRÍAS PARCIALES?\n Responde 'y' para sí, 'n' para no. ")
+    if ans == 'y' or ans == 'n':
+        flag = False
+        if ans == 'y':
+            ans = True
+        else:
+            ans = False
+
+if ans:
+    # Creación de un archivo .gjf por cada geometria parcial
+    for n in range(n-1):
+        # Insertar las coordenadas en la plantilla .gjf
+        file_path = "templateC2H6.gjf"
+
+        with open(file_path, 'r') as file:
+            template = file.read()
+            # Número de átomos
+            for x in range(7):
+                # Número de demensiones para el vector del átomo
+                for y in range(3):
+                    template = template.replace(f"{x+1}[n][{y}]", f"{atomslist[x][n][y]}")
+        print(template)
+
+        new_file_path = f"{n+1}geom.gjf."
+
+        with open(new_file_path, 'w') as file:
+            file.write(template)
+    
+    print(f"File '{new_file_path}' created successfully.")
