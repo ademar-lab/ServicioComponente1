@@ -78,26 +78,26 @@ n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
 
 # Crear una lista de los valores parciales para cada variable
 difvecatomslist = difvecatomslist/n
-print("\ndifvectatomslist/n:\n")
-for i in range(7):
-    print(difvecatomslist[i])
-print("\ninitialatomslist:\n")
-for i in range(7):
-    print(iniatialatomslist[i])
+# print("\ndifvectatomslist/n:\n")
+# for i in range(7):
+#     print(difvecatomslist[i])
+# print("\ninitialatomslist:\n")
+# for i in range(7):
+#     print(iniatialatomslist[i])
 
 # Crear una lista de vectores para cada átomo de cada geometría parcial
-
-for i in range(n):
-    print("\n")
-    for j in range(7):
-        print(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
-
-"""
 partialgeoms = []
 for i in range(n):
-    partialgeoms.append(np.array([iniatialatomslist[x] + (n+1)*difvecatomslist[x] for x in range(7)]))
-    print(f"\n{i} Partial geometry:\n")
-    print(partialgeoms[i])
+    print("\n")
+    partialgeom = []
+    for j in range(7):
+        partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+        #print(partialgeom[j])
+    partialgeoms.append(np.array(partialgeom))
+
+partialgeoms = np.array(partialgeoms)
+# for x in partialgeoms[2,5,0]:
+#     print(x)
 
 # Generar los documentos .gjf
 flag = True
@@ -124,8 +124,8 @@ if ans:
             for x in range(7):
                 # Número de demensiones para el vector del átomo
                 for y in range(3):
-                    template = template.replace(f"{x+1}[n][{y}]", f"{partialgeoms[x][n][y]}")
-        print(template)
+                    template = template.replace(f"{x+1}[n][{y}]", f"{partialgeoms[n,x,0,y]}")
+        #print(template)
 
         new_file_path = f"{n+1}geom.gjf."
 
@@ -133,4 +133,3 @@ if ans:
             file.write(template)
     
     print(f"File '{new_file_path}' created successfully.")
-"""
