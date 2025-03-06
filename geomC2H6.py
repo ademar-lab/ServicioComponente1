@@ -98,37 +98,41 @@ for i in range(n):
     partialgeom = []
     for j in range(7):
         #Se multiplica el vector por una variable aux que ajustará su magnitud a la apropiada 
-        # #Se ajusta el vector a y f
-        if j == 0 or j == 5:
+        # #Se ajusta el vector a
+        if j == 0:
             vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
             vec = vec * (rCH+(i+1)*(deltaRCH/n))/magnitude(vec[0])
             print(magnitude(vec[0]))
             partialgeom.append(vec)
-            # aux = (rCH+(i+1)*deltaRCC)/magnitude(difvecatomslist[j])
-        # #Se ajusta el vector b y g
-        if j == 1 or j == 6:
-            # print("b or g")
-        #     aux = rCH/magnitude(difvecatomslist[j])
+        # #Se ajusta el vector b
+        if j == 1:
             vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
             vec = vec * (rCH/magnitude(vec[0]))
             print(magnitude(vec[0]))
             partialgeom.append(vec)
-        # #Se ajusta el vector c
+        # Se ajusta el vector c
         if j == 3:
-            # print("c")
-        #     aux = (rCC+(i+1)*deltaRCH)/magnitude(difvecatomslist[j])
             partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+        # Se ajustan los vectores d y e
         if j == 2 or j == 4:
             # print("d or e")
             partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
-        print(partialgeom[j][0])
+        # vector f
+        if j == 5:
+            vec = -1*partialgeom[0][0] + partialgeom[3][0]
+            partialgeom.append(np.array([vec]))
+        # vector g
+        if j == 6:
+            vec = -1*partialgeom[1][0] + partialgeom[3][0]
+            partialgeom.append(np.array([vec]))
     partialgeoms.append(partialgeom)
-print(magnitude(partialgeoms[0][0][0]))
-
+# print(magnitude(partialgeoms[0][0][0]))
 
 partialgeoms = np.array(partialgeoms)
 # for x in partialgeoms[2,5,0]:
 #     print(x)
+
+print(partialgeoms)
 
 # Generar los documentos .gjf
 flag = True
