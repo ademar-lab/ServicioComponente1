@@ -7,6 +7,10 @@ El resultado esperado es una lista de coordenadas de los átomos de hidrógeno, 
 import numpy as np
 import math as math
 
+# Definir función de magnitud para tomar en cuenta el cambio de distancia entre átomos 
+def magnitude(vector): 
+    return math.sqrt(sum(pow(element, 2) for element in vector))
+
 # Valores iniciales de las variables de interés (SP3)
 # Distancia de enlace entre C-H
 rCH = 1.07
@@ -45,6 +49,8 @@ teta2p = 0
 
 # Diferencias entre SP3 y SP2
 deltaRCC = abs(rCCp-rCC)
+# Diferencia entre los átomos de hidrógeno que entran y C
+deltaRCH = abs(rCCp-rCH)
 # Diferencia del ángulo que incrementó
 deltaT1 = abs(teta1p-teta1)
 # Diferencia del anguló que disminuyó
@@ -63,7 +69,7 @@ gp = (-1*bp) + cp
 
 finalatomslist = [ap,bp,dp,cp,ep,fp,gp]
 
-# Calcular los vectores difereranciales
+# Calcular los vectores difereranciales (solo incluye cambio de ángulos)
 difvecatomslist = []
 for i in range(7):
     difvecatomslist.append(finalatomslist[i]-iniatialatomslist[i])
@@ -91,9 +97,32 @@ for i in range(n):
     print("\n")
     partialgeom = []
     for j in range(7):
-        partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
-        #print(partialgeom[j])
-    partialgeoms.append(np.array(partialgeom))
+        #Se multiplica el vector por una variable aux que ajustará su magnitud a la apropiada 
+        # #Se ajusta el vector a y f
+        if j == 0 or j == 5:
+            # print("a or f")
+            # aux = (rCH+(i+1)*deltaRCC)/magnitude(difvecatomslist[j])
+            partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+        # #Se ajusta el vector b y g
+        if j == 1 or j == 6:
+            # print("b or g")
+        #     aux = rCH/magnitude(difvecatomslist[j])
+            vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
+            vec = vec * (rCH/magnitude(vec[0]))
+            print(magnitude(vec[0]))
+            partialgeom.append(vec)
+        # #Se ajusta el vector c
+        if j == 3:
+            # print("c")
+        #     aux = (rCC+(i+1)*deltaRCH)/magnitude(difvecatomslist[j])
+            partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+        if j == 2 or j == 4:
+            # print("d or e")
+            partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+        print(partialgeom[j][0])
+    partialgeoms.append(partialgeom)
+print(magnitude(partialgeoms[0][0][0]))
+
 
 partialgeoms = np.array(partialgeoms)
 # for x in partialgeoms[2,5,0]:
@@ -133,3 +162,4 @@ if ans:
             file.write(template)
     
     print(f"File '{new_file_path}' created successfully.")
+"""
