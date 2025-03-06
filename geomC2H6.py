@@ -113,10 +113,17 @@ for i in range(n):
         # Se ajusta el vector c
         if j == 3:
             partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
-        # Se ajustan los vectores d y e
-        if j == 2 or j == 4:
+        # Se ajusta el vector d
+        if j == 2:
             # print("d or e")
-            partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+            vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
+            vec = vec * (rCH/magnitude(vec[0]))
+            print(magnitude(vec[0]))
+            partialgeom.append(vec)
+        # vector e
+        if j == 4:
+            vec = -1*partialgeom[2][0] + partialgeom[3][0]
+            partialgeom.append(np.array([vec]))
         # vector f
         if j == 5:
             vec = -1*partialgeom[0][0] + partialgeom[3][0]
