@@ -18,15 +18,17 @@ teta1 = 109.47122
 teta2 =109.47122
 
 # Vectorizar la molécula C2H6 tomando C1 como el origen
-a = np.array([np.array([(-rCH*(np.sin(math.radians(teta1/2)))), (rCH*(np.cos(math.radians(teta1/2)))), 0])])
-b = np.array([np.array([(rCH*(np.sin(math.radians(teta1/2)))), (rCH*(np.cos(math.radians(teta1/2)))), 0])])
+a = np.array([(-rCH*(np.sin(math.radians(teta1/2)))), (rCH*(np.cos(math.radians(teta1/2)))), 0])
+b = np.array([(rCH*(np.sin(math.radians(teta1/2)))), (rCH*(np.cos(math.radians(teta1/2)))), 0])
 
-c = np.array([np.array([0, (-rCC*(np.cos(math.radians(teta1/2)))), (rCC*(np.sin(math.radians(teta1/2))))])])
-d = np.array([np.array([0, (-rCH*(np.cos(math.radians(teta1/2)))), (-rCH*(np.sin(math.radians(teta1/2))))])])
+c = np.array([0, (-rCC*(np.cos(math.radians(teta1/2)))), (rCC*(np.sin(math.radians(teta1/2))))])
+d = np.array([0, (-rCH*(np.cos(math.radians(teta1/2)))), (-rCH*(np.sin(math.radians(teta1/2))))])
 
 e = (-1*d) + c
 f = (-1*a) + c
 g = (-1*b) + c
+
+iniatialatomslist = [a,b,d,c,e,f,g]
 
 # Imprimir coordenadas de la molécula inicial
 # for x in range(7):
@@ -35,16 +37,38 @@ g = (-1*b) + c
 # Valores finales de las variables de interés (SP2)
 # Se agrega un P(prima) para denotar que es el valor final
 # Distancia del doble enlace C=C
-rCCP = 1.3552
+rCCp = 1.3552
 # Ángulo que incrementó
-teta1P = 120
+teta1p = 120
 # Ángulo que disminuyó
-teta2P = 0
+teta2p = 0
 
 # Diferencias entre SP3 y SP2
-deltaRCC = abs(rCCP-rCC)
-deltaT1 = abs(teta1P-teta1)
-deltaT2 = abs(teta2P-teta2)
+deltaRCC = abs(rCCp-rCC)
+# Diferencia del ángulo que incrementó
+deltaT1 = abs(teta1p-teta1)
+# Diferencia del anguló que disminuyó
+deltaT2 = abs(teta2p-teta2)
+
+# Vectorizar la molécula C2H6 tomando C1 como el origen
+ap = np.array([0, (-rCCp*(np.cos(math.radians(teta1/2)))), (rCCp*(np.sin(math.radians(teta1/2))))])
+bp = np.array([0, (rCH*(np.sin(math.radians(90-deltaT1)))), (rCH*(np.cos(math.radians(90-deltaT1))))])
+
+cp = ap
+dp = np.array([0, (-rCH*(np.cos(math.radians((teta1/2)+deltaT1)))), (-rCH*(np.sin(math.radians((teta1/2)+deltaT1))))])
+
+ep = (-1*dp) + cp
+fp = (-1*ap) + cp
+gp = (-1*bp) + cp
+
+finalatomslist = [ap,bp,dp,cp,ep,fp,gp]
+
+# Calcular los vectores difereranciales
+difvecatomslist = []
+for i in range(7):
+    difvecatomslist.append(finalatomslist[i]-iniatialatomslist[i])
+    # print(difvecatomslist[i])
+difvecatomslist = np.array(difvecatomslist)
 
 # Comenzar el algoritmo
 print("\nESTE PROGRAMA ANALIZARÁ LA GEOMETRÍA DE LA HIBRIDACIÓN SP2 A SP3 DE UNA MOLÉCULA C2H6.\nLA SALIDA SERÁ UNA LISTA DE LAS COORDENADAS DE LOS ÁTOMOs EN LOS MOMENTOS DURANTE LA HIBRIDACIÓN SIN CONTAR C1(ORIGEN).")
@@ -53,31 +77,27 @@ print("_" * 100)
 n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
 
 # Crear una lista de los valores parciales para cada variable
-valoresRCC = [rCC-((deltaRCC/(n))*(x+1)) for x in range(n)]
-# Troubleshooting
-# print(f"r prima: {valoresRCC}")
-valoresT1 = [teta1+((deltaT1/(n))*(x+1)) for x in range(n)]
-# print(f"teta1: {valoresT1}")
-valoresT2 = [teta2-((deltaT2/(n))*(x+1)) for x in range(n)]
-# print(f"teta2: {valoresT2}\n")
+difvecatomslist = difvecatomslist/n
+print("\ndifvectatomslist/n:\n")
+for i in range(7):
+    print(difvecatomslist[i])
+print("\ninitialatomslist:\n")
+for i in range(7):
+    print(iniatialatomslist[i])
 
 # Crear una lista de vectores para cada átomo de cada geometría parcial
-a = np.array([np.array([(-rCH*(np.sin(math.radians(x/2)))), (rCH*(np.cos(math.radians(x/2)))), 0]) for x in valoresT2])
-b = np.array([np.array([(rCH*(np.sin(math.radians(teta1/2)))), (rCH*(np.cos(math.radians(teta1/2)))), 0]) for x in range(n)])
 
-c = np.array([np.array([0, (-y*(np.cos(math.radians(x/2)))), (y*(np.sin(math.radians(x/2))))]) for x, y in zip(valoresT1, valoresRCC)])
-d = np.array([np.array([0, (-rCH*(np.cos(math.radians(x/2)))), (-rCH*(np.sin(math.radians(x/2))))]) for x in valoresT1])
+for i in range(n):
+    print("\n")
+    for j in range(7):
+        print(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
 
-e = (-1*d) + c
-f = (-1*a) + c
-g = (-1*b) + c
-
-# El átomo c cambia de lugar con d debido al posicinamiento de este átomo en el doc .gjf 
-atomslist = [a,b,d,c,e,f,g]
-
-for x in range(n-1):
-    print(f"\nGEOMETRÍA PARCIAL {x+1}")
-    print(f"{a[x]}\n{b[x]}\n{d[x]}\n{c[x]}\n{e[x]}\n{f[x]}\n{g[x]}")
+"""
+partialgeoms = []
+for i in range(n):
+    partialgeoms.append(np.array([iniatialatomslist[x] + (n+1)*difvecatomslist[x] for x in range(7)]))
+    print(f"\n{i} Partial geometry:\n")
+    print(partialgeoms[i])
 
 # Generar los documentos .gjf
 flag = True
@@ -94,7 +114,7 @@ while(flag):
 
 if ans:
     # Creación de un archivo .gjf por cada geometria parcial
-    for n in range(n-1):
+    for n in range(n):
         # Insertar las coordenadas en la plantilla .gjf
         file_path = "templateC2H6.gjf"
 
@@ -104,7 +124,7 @@ if ans:
             for x in range(7):
                 # Número de demensiones para el vector del átomo
                 for y in range(3):
-                    template = template.replace(f"{x+1}[n][{y}]", f"{atomslist[x][n][y]}")
+                    template = template.replace(f"{x+1}[n][{y}]", f"{partialgeoms[x][n][y]}")
         print(template)
 
         new_file_path = f"{n+1}geom.gjf."
@@ -113,3 +133,4 @@ if ans:
             file.write(template)
     
     print(f"File '{new_file_path}' created successfully.")
+"""
