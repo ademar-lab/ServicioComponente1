@@ -100,9 +100,11 @@ for i in range(n):
         #Se multiplica el vector por una variable aux que ajustará su magnitud a la apropiada 
         # #Se ajusta el vector a y f
         if j == 0 or j == 5:
-            # print("a or f")
+            vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
+            vec = vec * (rCH+(i+1)*(deltaRCH/n))/magnitude(vec[0])
+            print(magnitude(vec[0]))
+            partialgeom.append(vec)
             # aux = (rCH+(i+1)*deltaRCC)/magnitude(difvecatomslist[j])
-            partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
         # #Se ajusta el vector b y g
         if j == 1 or j == 6:
             # print("b or g")
@@ -162,4 +164,3 @@ if ans:
             file.write(template)
     
     print(f"File '{new_file_path}' created successfully.")
-"""
