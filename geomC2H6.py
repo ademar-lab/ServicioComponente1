@@ -100,38 +100,38 @@ for i in range(n):
         #Se multiplica el vector por una variable aux que ajustará su magnitud a la apropiada 
         # #Se ajusta el vector a
         if j == 0:
-            vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
-            vec = vec * (rCH+(i+1)*(deltaRCH/n))/magnitude(vec[0])
-            print(magnitude(vec[0]))
+            vec = np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
+            vec = vec * (rCH+(i+1)*(deltaRCH/n))/magnitude(vec)
+            print(magnitude(vec))
             partialgeom.append(vec)
         # #Se ajusta el vector b
         if j == 1:
-            vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
-            vec = vec * (rCH/magnitude(vec[0]))
-            print(magnitude(vec[0]))
+            vec = np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
+            vec = vec * (rCH/magnitude(vec))
+            print(magnitude(vec))
             partialgeom.append(vec)
         # Se ajusta el vector c
         if j == 3:
-            partialgeom.append(np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]]))
+            partialgeom.append(np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j]))
         # Se ajusta el vector d
         if j == 2:
             # print("d or e")
-            vec = np.array([iniatialatomslist[j] + (i+1)*difvecatomslist[j]])
-            vec = vec * (rCH/magnitude(vec[0]))
-            print(magnitude(vec[0]))
+            vec = np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
+            vec = vec * (rCH/magnitude(vec))
+            print(magnitude(vec))
             partialgeom.append(vec)
         # vector e
         if j == 4:
-            vec = -1*partialgeom[2][0] + partialgeom[3][0]
-            partialgeom.append(np.array([vec]))
+            vec = -1*partialgeom[2] + partialgeom[3]
+            partialgeom.append(np.array(vec))
         # vector f
         if j == 5:
-            vec = -1*partialgeom[0][0] + partialgeom[3][0]
-            partialgeom.append(np.array([vec]))
+            vec = -1*partialgeom[0] + partialgeom[3]
+            partialgeom.append(np.array(vec))
         # vector g
         if j == 6:
-            vec = -1*partialgeom[1][0] + partialgeom[3][0]
-            partialgeom.append(np.array([vec]))
+            vec = -1*partialgeom[1] + partialgeom[3]
+            partialgeom.append(np.array(vec))
     partialgeoms.append(partialgeom)
 # print(magnitude(partialgeoms[0][0][0]))
 
@@ -166,10 +166,10 @@ if ans:
             for x in range(7):
                 # Número de demensiones para el vector del átomo
                 for y in range(3):
-                    template = template.replace(f"{x+1}[n][{y}]", f"{partialgeoms[n,x,0,y]}")
+                    template = template.replace(f"{x+1}[n][{y}]", f"{partialgeoms[n,x,y]}")
         #print(template)
 
-        new_file_path = f"{n+1}geom.gjf."
+        new_file_path = f"{n+1}geom.gjf"
 
         with open(new_file_path, 'w') as file:
             file.write(template)
