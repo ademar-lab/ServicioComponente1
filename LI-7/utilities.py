@@ -33,7 +33,9 @@ def parse_atom_coordinates(file_path):
 
 def generate_gjf(flag, partialgeoms, num_geoms, num_atoms, template_file_path):
     """
-    Generar los documentos .gjf   
+    Generar los documentos .gjf
+
+    El primer átomo de la lista de átomos siempre debe tener las coordenadas 0. 0. 0.  
     """
     print("_"*100)
     # Restringir las entradas a 'y' y 'n'
@@ -56,8 +58,7 @@ def generate_gjf(flag, partialgeoms, num_geoms, num_atoms, template_file_path):
                 for x in range(num_atoms):
                     # Número de demensiones para el vector del átomo
                     for y in range(3):
-                        print(partialgeoms)
-                        template = template.replace(f"{x+1}[n][{y}]", f"{partialgeoms[n,x,y]}")
+                        template = template.replace(f" {x+1}[n][{y}]", f" {partialgeoms[n,x,y]}")
 
             new_file_path = f"LI-7/{n+1}geom.gjf"
 

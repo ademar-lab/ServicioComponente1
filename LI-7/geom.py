@@ -11,15 +11,15 @@ sp2_atoms_list = utils.parse_atom_coordinates("LI-7/sp2-coordinates.txt")
 
 print("Sp3")
 
-for i in range(44):
-    sp3_atoms_list[i] = sp3_atoms_list[i]-[-0.00004782, 0.49782449, 1.09904934]
-    sp2_atoms_list[i] = sp2_atoms_list[i] - [0.00039556, 1.39654402, 0.00206175]
-    print(sp3_atoms_list[i])
+# for i in range(44):
+#     sp3_atoms_list[i] = sp3_atoms_list[i]-[-0.67303412, -2.68660133, 0.43903985]
+#     sp2_atoms_list[i] = sp2_atoms_list[i] - [0.00039556, 1.39654402, 0.00206175]
+#     print(sp3_atoms_list[i])
 
-print("\nSp2")
+# print("\nSp2")
 
-for i in range(44):
-    print(sp2_atoms_list[i])
+# for i in range(44):
+#     print(sp2_atoms_list[i])
 
 sp3_atoms_list = np.array(sp3_atoms_list)
 
