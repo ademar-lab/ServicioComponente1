@@ -6,121 +6,110 @@ import utilities as utils
 def magnitude(vector): 
     return math.sqrt(sum(pow(element, 2) for element in vector))
 
-sp3_atoms_list = utils.parse_atom_coordinates("LI-7/sp3-coordinates.txt")
-sp2_atoms_list = utils.parse_atom_coordinates("LI-7/sp2-coordinates.txt") 
+# Obtener la lista de coordenadas de los átomos de la molécula
+# Las coordenadas de los átomos se encuentran en el archivo "sp3-coordinates.txt" y "sp2-coordinates.txt"
+sp3_atoms_list = utils.parse_atom_coordinates("sp3-coordinates.txt")
+sp2_atoms_list = utils.parse_atom_coordinates("sp2-coordinates.txt") 
 
-print("Sp3")
-
-# for i in range(44):
-#     sp3_atoms_list[i] = sp3_atoms_list[i]-[-0.67303412, -2.68660133, 0.43903985]
-#     sp2_atoms_list[i] = sp2_atoms_list[i] - [0.00039556, 1.39654402, 0.00206175]
-#     print(sp3_atoms_list[i])
-
-# print("\nSp2")
-
-# for i in range(44):
-#     print(sp2_atoms_list[i])
+# Se alinean las moléculas cationicas centrales de sp3 y sp2 en la misma posición 
+# Se alinea la molécula cationica central de sp3 con el eje z
+print("\nSP3")
+for i in range(44):
+    # Se lleva el primer átomo de Carbono al origen
+    sp3_atoms_list[i] = sp3_atoms_list[i]-[-0.00004782, 0.49782449, 1.09904934]
 
 sp3_atoms_list = np.array(sp3_atoms_list)
 
-utils.generate_gjf(True, np.array([sp3_atoms_list]), 1, 44, "LI-7/template.gjf")
+# Calcular el ángulo de rotación necesarrio con respecto al eje x
+tetax = -(math.atan(sp3_atoms_list[0, 2]/sp3_atoms_list[0, 1])) # atan retorna valores de -PI/2 a PI/2
+# Calcular la matriz de rotación respecto al eje x
+matriz_rot_x = np.array([[1, 0, 0],
+                        [0, math.cos(tetax), -math.sin(tetax)],
+                        [0, math.sin(tetax), math.cos(tetax)]])
 
-# # Valores iniciales de las variables de interés (SP3)
-# # Distancia de enlace entre C-H
-# rCH = 1.07
-# # Distancia de enlace entre C-C
-# rCC = 1.54
-# # Ángulo que incrementará
-# teta1 = 109.47122
-# # Ángulo que disminuirá
-# teta2 =109.47122
+# Aplicar la matriz de rotación a cada átomo de la molécula sp3
+for i in range(44):
+    sp3_atoms_list[i] = np.dot(matriz_rot_x, sp3_atoms_list[i])
 
-# # Valores finales de las variables de interés (SP2)
-# # Se agrega un P(prima) para denotar que es el valor final
-# # Distancia del doble enlace C=C
-# rCCp = 1.3552
-# # Ángulo que incrementó
-# teta1p = 120
-# # Ángulo que disminuyó
-# teta2p = 0
+# Se alinea la molécula cationica central de sp2 con el eje z
+print("\nSP2")
+for i in range(44):
+    # Se lleva el primer átomo de Carbono al origen
+    sp2_atoms_list[i] = sp2_atoms_list[i]-[0.00039556, 1.39654402, 0.00206175]
 
-# # Diferencias entre SP3 y SP2
-# deltaRCC = abs(rCCp-rCC)
-# # Diferencia entre los átomos de hidrógeno que entran y C
-# deltaRCH = abs(rCCp-rCH)
-# # Diferencia del ángulo que incrementó
-# deltaT1 = abs(teta1p-teta1)
-# # Diferencia del anguló que disminuyó
-# deltaT2 = abs(teta2p-teta2)
+sp2_atoms_list = np.array(sp2_atoms_list)
 
-# # Calcular los vectores difereranciales (solo incluye cambio de ángulos)
-# difvecatomslist = []
-# for i in range(44):
-#     difvecatomslist.append(sp2_atoms_list[i]-sp3_atoms_list[i])
-#     print(difvecatomslist[i])
-# difvecatomslist = np.array(difvecatomslist)
+# Calcular el ángulo de rotación necesarrio con respecto al eje x
+tetax = -(math.atan(sp2_atoms_list[0, 2]/sp2_atoms_list[0, 1])) # atan retorna valores de -PI/2 a PI/2
 
-# # Comenzar el algoritmo
-# print("\nESTE PROGRAMA ANALIZARÁ LA GEOMETRÍA DE LA HIBRIDACIÓN SP2 A SP3 DE UNA MOLÉCULA LI-7 en el vacío.\nLA SALIDA SERÁ UNA LISTA DE LAS COORDENADAS DE LOS ÁTOMOS EN LOS MOMENTOS DURANTE LA HIBRIDACIÓN SIN CONTAR C1(ORIGEN).")
-# print("_" * 100)
+# Calcular la matriz de rotación respecto al eje x
+matriz_rot_x = np.array([[1, 0, 0], 
+                        [0, math.cos(tetax), -math.sin(tetax)],
+                        [0, math.sin(tetax), math.cos(tetax)]])
 
-# n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
+# Aplicar la matriz de rotación a cada átomo de la molécula sp2
+for i in range(44):
+    sp2_atoms_list[i] = np.dot(matriz_rot_x, sp2_atoms_list[i])
 
-# # Crear una lista de los valores parciales para cada variable
-# difvecatomslist = difvecatomslist/n
-# # print("\ndifvectatomslist/n:\n")
-# # for i in range(7):
-# #     print(difvecatomslist[i])
-# # print("\ninitialatomslist:\n")
-# # for i in range(7):
-# #     print(iniatialatomslist[i])
+# Calcular los vectores difereranciales (solo incluye cambio de ángulos)
+difvecatomslist = sp2_atoms_list-sp3_atoms_list
+
+# Comenzar el algoritmo
+print("\nESTE PROGRAMA ANALIZARÁ LA GEOMETRÍA DE LA HIBRIDACIÓN SP2 A SP3 DE UNA MOLÉCULA LI-7 en el vacío.\nLA SALIDA SERÁ UNA LISTA DE LAS COORDENADAS DE LOS ÁTOMOS EN LOS MOMENTOS DURANTE LA HIBRIDACIÓN SIN CONTAR C1(ORIGEN).")
+print("_" * 100)
+
+n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
+
+# Crear una lista de los valores parciales para cada variable
+difvecatomslist = difvecatomslist/n
 
 # # Crear una lista de vectores para cada átomo de cada geometría parcial
 # partialgeoms = []
 # for i in range(n):
-#     print("\n")
 #     partialgeom = []
-#     for j in range(7):
-#         #Se multiplica el vector por una variable aux que ajustará su magnitud a la apropiada 
-#         # #Se ajusta el vector a
-#         if j == 0:
-#             vec = np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
+#     for j in range(44):
+#         if j == 8: # átomo a
+#             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
 #             vec = vec * (rCH+(i+1)*(deltaRCH/n))/magnitude(vec)
-#             print(magnitude(vec))
-#             partialgeom.append(vec)
-#         # #Se ajusta el vector b
-#         if j == 1:
-#             vec = np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
+#             np.append(partialgeom, vec)
+#         elif j == 9: # átomo b
+#             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
+#             vec =  vec * (rCH/magnitude(vec))
+#             np.append(partialgeom, vec)
+#         elif j == 7: # átomo c
+#             partialgeom.append((difvecatomslist[j]*(i+1)) + sp3_atoms_list[j])
+#             np.append(partialgeom, vec)
+#         elif j == 15: # átomo d
+#             vec = np.array(sp3_atoms_list[j] + (i+1)*difvecatomslist[j])
 #             vec = vec * (rCH/magnitude(vec))
-#             print(magnitude(vec))
-#             partialgeom.append(vec)
-#         # Se ajusta el vector c
-#         if j == 3:
-#             partialgeom.append(np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j]))
-#         # Se ajusta el vector d
-#         if j == 2:
-#             # print("d or e")
-#             vec = np.array(iniatialatomslist[j] + (i+1)*difvecatomslist[j])
-#             vec = vec * (rCH/magnitude(vec))
-#             print(magnitude(vec))
-#             partialgeom.append(vec)
-#         # vector e
-#         if j == 4:
-#             vec = -1*partialgeom[2] + partialgeom[3]
-#             partialgeom.append(np.array(vec))
-#         # vector f
-#         if j == 5:
-#             vec = -1*partialgeom[0] + partialgeom[3]
-#             partialgeom.append(np.array(vec))
-#         # vector g
-#         if j == 6:
-#             vec = -1*partialgeom[1] + partialgeom[3]
-#             partialgeom.append(np.array(vec))
+#             np.append(partialgeom, vec)
+#         # elif j == 21: # átomo e
+#         #     vec = -1*partialgeom[2] + partialgeom[3]
+#         #     partialgeom.append(vec)
+#         # elif j == 10: # átomo f
+#         #     vec = -1*partialgeom[0] + partialgeom[3]
+#         #     partialgeom.append(vec)
+#         # elif j == 11: # átomo g
+#         #     vec = -1*partialgeom[0] + partialgeom[3]
+#         #     partialgeom.append(vec)
+#         # elif j == 12: # átomo h
+#         #     vec = -1*partialgeom[1] + partialgeom[3]
+#         #     partialgeom.append(vec)}
+#         else:
+#             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
+#             np.append(partialgeom, vec)
+
 #     partialgeoms.append(partialgeom)
-# # print(magnitude(partialgeoms[0][0][0]))
 
 # partialgeoms = np.array(partialgeoms)
-# # for x in partialgeoms[2,5,0]:
-# #     print(x)
 
 # print(partialgeoms)
+
+partialgeoms = []
+
+for i in range(n):
+    partialgeoms.append(difvecatomslist*(i+1) + sp3_atoms_list)
+
+print(np.array(partialgeoms))
+
+utils.generate_gjf(True, np.array(partialgeoms), n, 44, "template.gjf")

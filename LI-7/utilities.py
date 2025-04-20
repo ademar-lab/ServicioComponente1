@@ -31,12 +31,18 @@ def parse_atom_coordinates(file_path):
 # atom_list = parse_atom_coordinates('your_file.txt')
 # print(atom_list[0])  # Prints first atom's coordinates as numpy array
 
-def generate_gjf(flag, partialgeoms, num_geoms, num_atoms, template_file_path):
+def generate_gjf(flag, final_atom_list, num_geoms, num_atoms, template_file_path):
     """
-    Generar los documentos .gjf
+    Generar un documento .gjf para cada lista de átomos que sea proporcionadas.
 
-    El primer átomo de la lista de átomos siempre debe tener las coordenadas 0. 0. 0.  
+    Args: 
+        flag (bool): Indica si se debe crear un archivo .gjf o no.
+        final_atom_list (list): Lista de listas de átomos, cada lista contiene una geometría parcial.
+        num_geoms (int): Número de geometrías parciales.
+        num_atoms (int): Número de átomos en cada molécula.
+        template_file_path (str): Ruta al archivo plantilla .gjf que se utilizará para crear los nuevos archivos.
     """
+
     print("_"*100)
     # Restringir las entradas a 'y' y 'n'
     while(flag):
@@ -58,11 +64,14 @@ def generate_gjf(flag, partialgeoms, num_geoms, num_atoms, template_file_path):
                 for x in range(num_atoms):
                     # Número de demensiones para el vector del átomo
                     for y in range(3):
-                        template = template.replace(f" {x+1}[n][{y}]", f" {partialgeoms[n,x,y]}")
+                        template = template.replace(f" {x+1}[n][{y}]", f" {final_atom_list[n,x,y]}")
 
-            new_file_path = f"LI-7/{n+1}geom.gjf"
+            new_file_path = f"{n+1}geom.gjf"
 
             with open(new_file_path, 'w') as file:
                 file.write(template)
         
         print(f"File '{new_file_path}' created successfully.")
+
+# Example usage:
+# generate_gjf(True, [sp3-coordinates.txt], 1, 44, "template.gjf")
