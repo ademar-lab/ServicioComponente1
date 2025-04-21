@@ -107,6 +107,21 @@ for i in range(44):
     if i in moleculaCationica:
         moleculaCationica[i] = moleculaCationica[i] - sp3_atoms_list[16]
 
+# Obtener las coordenadas de la molécula catiónica de un extremo(izquierdo) con el C2 como origen
+moleculaCationicaLeft = {}
+
+for i in range(44):
+    if i >= 27 and i <= 33:
+        moleculaCationicaLeft[i] = sp3_atoms_list[i]
+    elif i == 35:
+        moleculaCationicaLeft[i] = sp3_atoms_list[i]
+    elif i >= 40 and i <= 43:
+        moleculaCationicaLeft[i] = sp3_atoms_list[i]
+
+for i in range(44):
+    if i in moleculaCationicaLeft:
+        moleculaCationicaLeft[i] = moleculaCationicaLeft[i] - sp3_atoms_list[18]
+
 # print("\nMolecula Cationica:")
 # for i in range(44):
 #     if i in moleculaCationica:
@@ -120,7 +135,7 @@ partialgeoms = []
 for i in range(n):
     partialgeom = []
     for j in range(44):
-    
+        # Lado derecho de la molécula
         if j == 8: # átomo b
             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
             vec = vec/(magnitude(vec)/rCH)
@@ -145,6 +160,32 @@ for i in range(n):
         elif j in moleculaCationica:
             # Se toma el átomo de C2(partialgeom[18]) como el nuevo origen
             vec = partialgeom[16] + moleculaCationica[j]
+            partialgeom.append(vec)
+        # Lado izquierdo de la molécula
+        elif j == 11: # átomo b
+            vec = (difvecatomslist[j]*(i+1)) + (sp3_atoms_list[j]-sp3_atoms_list[10])
+            vec = vec/(magnitude(vec)/rCH)
+            partialgeom.append(vec + sp3_atoms_list[10])
+        elif j == 19: # átomo g
+            vec = partialgeom[18] - partialgeom[11]
+            partialgeom.append(vec + sp3_atoms_list[10])
+        elif j == 12: # átomo a
+            vec = (difvecatomslist[j]*(i+1)) + (sp3_atoms_list[j]-sp3_atoms_list[10])
+            vec = vec/(magnitude(vec)/(rCH+(i+1)*(deltaRCH/n)))
+            partialgeom.append(vec + sp3_atoms_list[10])
+        # Se ajusta el átomo f después de que se haya calculado el átomo número 16 de la geometría parcial
+        elif j == 13: # átomo f
+            vec = np.array([0., 0., 0.])
+            partialgeom.append(vec + sp3_atoms_list[10])
+        elif j == 18: # átomo C2
+            vec = (difvecatomslist[j]*(i+1)) + (sp3_atoms_list[j]-sp3_atoms_list[10])
+            vec = vec/(magnitude(vec)/(rCC-(i+1)*(deltaRCC/n)))
+            partialgeom.append(vec + sp3_atoms_list[10])
+            # Se ajusta el átomo f
+            partialgeom[13] += (partialgeom[18] - partialgeom[10]) - (partialgeom[12] - partialgeom[10]) 
+        elif j in moleculaCationicaLeft:
+            # Se toma el átomo de C2(partialgeom[18]) como el nuevo origen
+            vec = partialgeom[18] + moleculaCationicaLeft[j]
             partialgeom.append(vec)
         else:
             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
