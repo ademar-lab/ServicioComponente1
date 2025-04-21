@@ -93,6 +93,27 @@ deltaT1 = abs(teta1p-teta1)
 # Diferencia del anguló que disminuyó
 deltaT2 = abs(teta2p-teta2)
 
+# Obtener las coordenadas de la molécula catiónica de un extremo con el C2 como origen
+moleculaCationica = {}
+for i in range(44):
+    if i >= 20 and i <= 26:
+        moleculaCationica[i] = sp3_atoms_list[i]
+    elif i == 34:
+        moleculaCationica[i] = sp3_atoms_list[i]
+    elif i >= 36 and i <= 39:
+        moleculaCationica[i] = sp3_atoms_list[i]
+
+for i in range(44):
+    if i in moleculaCationica:
+        moleculaCationica[i] = moleculaCationica[i] - sp3_atoms_list[16]
+
+# print("\nMolecula Cationica:")
+# for i in range(44):
+#     if i in moleculaCationica:
+#         print(f"Átomo {i}: {moleculaCationica[i]}")
+
+
+
 # Crear una lista de coordenadas para cada geometría parcial
 partialgeoms = []
 
@@ -121,6 +142,10 @@ for i in range(n):
             partialgeom.append(vec)
             # Se ajusta el átomo f
             partialgeom[9] += partialgeom[16] - partialgeom[7]
+        elif j in moleculaCationica:
+            # Se toma el átomo de C2(partialgeom[18]) como el nuevo origen
+            vec = partialgeom[16] + moleculaCationica[j]
+            partialgeom.append(vec)
         else:
             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
             partialgeom.append(vec)
@@ -129,6 +154,6 @@ for i in range(n):
 
 partialgeoms = np.array(partialgeoms)
 
-print(partialgeoms)
+# print(partialgeoms)
 
 utils.generate_gjf(True, partialgeoms, n, 44, "template.gjf")
