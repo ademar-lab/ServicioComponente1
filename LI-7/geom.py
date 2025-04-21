@@ -16,7 +16,7 @@ sp2_atoms_list = utils.parse_atom_coordinates("sp2-coordinates.txt")
 print("\nSP3")
 for i in range(44):
     # Se lleva el primer átomo de Carbono al origen
-    sp3_atoms_list[i] = sp3_atoms_list[i]-[-0.00004782, 0.49782449, 1.09904934]
+    sp3_atoms_list[i] = sp3_atoms_list[i]-[2.48855387, -0.84573070, 0.82053390]
 
 sp3_atoms_list = np.array(sp3_atoms_list)
 
@@ -35,7 +35,7 @@ for i in range(44):
 print("\nSP2")
 for i in range(44):
     # Se lleva el primer átomo de Carbono al origen
-    sp2_atoms_list[i] = sp2_atoms_list[i]-[0.00039556, 1.39654402, 0.00206175]
+    sp2_atoms_list[i] = sp2_atoms_list[i]-[2.48872136, 0.02402876, 0.00962054]
 
 sp2_atoms_list = np.array(sp2_atoms_list)
 
@@ -63,53 +63,72 @@ n = int(input("\nCual es la cantidad de geometrias graduales que deseas? ")) + 1
 # Crear una lista de los valores parciales para cada variable
 difvecatomslist = difvecatomslist/n
 
-# # Crear una lista de vectores para cada átomo de cada geometría parcial
-# partialgeoms = []
-# for i in range(n):
-#     partialgeom = []
-#     for j in range(44):
-#         if j == 8: # átomo a
-#             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
-#             vec = vec * (rCH+(i+1)*(deltaRCH/n))/magnitude(vec)
-#             np.append(partialgeom, vec)
-#         elif j == 9: # átomo b
-#             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
-#             vec =  vec * (rCH/magnitude(vec))
-#             np.append(partialgeom, vec)
-#         elif j == 7: # átomo c
-#             partialgeom.append((difvecatomslist[j]*(i+1)) + sp3_atoms_list[j])
-#             np.append(partialgeom, vec)
-#         elif j == 15: # átomo d
-#             vec = np.array(sp3_atoms_list[j] + (i+1)*difvecatomslist[j])
-#             vec = vec * (rCH/magnitude(vec))
-#             np.append(partialgeom, vec)
-#         # elif j == 21: # átomo e
-#         #     vec = -1*partialgeom[2] + partialgeom[3]
-#         #     partialgeom.append(vec)
-#         # elif j == 10: # átomo f
-#         #     vec = -1*partialgeom[0] + partialgeom[3]
-#         #     partialgeom.append(vec)
-#         # elif j == 11: # átomo g
-#         #     vec = -1*partialgeom[0] + partialgeom[3]
-#         #     partialgeom.append(vec)
-#         # elif j == 12: # átomo h
-#         #     vec = -1*partialgeom[1] + partialgeom[3]
-#         #     partialgeom.append(vec)}
-#         else:
-#             vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
-#             np.append(partialgeom, vec)
+# Valores iniciales de las variables de interés (SP3)
+# Distancia de enlace entre C-H
+rCH = 1.07
+# Distancia de enlace entre C-C
+rCC = 1.54
+# Distancia de enlace entre C-N
+rCN = 1.47
+# Ángulo que incrementará
+teta1 = 109.47122
+# Ángulo que disminuirá
+teta2 =109.47122
 
-#     partialgeoms.append(partialgeom)
+# Valores finales de las variables de interés (SP2)
+# Se agrega un P(prima) para denotar que es el valor final
+# Distancia del doble enlace C=C
+rCCp = 1.3552
+# Ángulo que incrementó
+teta1p = 120
+# Ángulo que disminuyó
+teta2p = 0
 
-# partialgeoms = np.array(partialgeoms)
+# Diferencias entre SP3 y SP2
+deltaRCC = abs(rCCp-rCC)
+# Diferencia entre los átomos de hidrógeno que entran y C
+deltaRCH = abs(rCCp-rCH)
+# Diferencia del ángulo que incrementó
+deltaT1 = abs(teta1p-teta1)
+# Diferencia del anguló que disminuyó
+deltaT2 = abs(teta2p-teta2)
 
-# print(partialgeoms)
-
+# Crear una lista de coordenadas para cada geometría parcial
 partialgeoms = []
 
 for i in range(n):
-    partialgeoms.append(difvecatomslist*(i+1) + sp3_atoms_list)
+    partialgeom = []
+    for j in range(44):
+    
+        if j == 8: # átomo b
+            vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
+            vec = vec/(magnitude(vec)/rCH)
+            partialgeom.append(vec)
+        elif j == 17: # átomo g
+            vec = partialgeom[16] - partialgeom[8]
+            partialgeom.append(vec)
+        elif j == 7: # átomo a
+            vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
+            vec = vec/(magnitude(vec)/(rCH+(i+1)*(deltaRCH/n)))
+            partialgeom.append(vec)
+        # Se ajusta el átomo f después de que se haya calculado el átomo número 16 de la geometría parcial
+        elif j == 9: # átomo f
+            vec = np.array([0., 0., 0.])
+            partialgeom.append(vec)
+        elif j == 16: # átomo C2
+            vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
+            vec = vec/(magnitude(vec)/(rCC-(i+1)*(deltaRCC/n)))
+            partialgeom.append(vec)
+            # Se ajusta el átomo f
+            partialgeom[9] += partialgeom[16] - partialgeom[7]
+        else:
+            vec = (difvecatomslist[j]*(i+1)) + sp3_atoms_list[j]
+            partialgeom.append(vec)
+    # print(np.array(partialgeom)) 
+    partialgeoms.append(partialgeom)
 
-print(np.array(partialgeoms))
+partialgeoms = np.array(partialgeoms)
 
-utils.generate_gjf(True, np.array(partialgeoms), n, 44, "template.gjf")
+print(partialgeoms)
+
+utils.generate_gjf(True, partialgeoms, n, 44, "template.gjf")
